@@ -1,175 +1,155 @@
-# 🚀 RESTful API — Express + TypeScript
+# RESTful API — Express + TypeScript
 
-A RESTful API for **User Management** built with **Express.js**, **TypeScript**, and **MySQL** following **Clean Architecture** principles.
+A robust, maintainable RESTful API for User Management built with Express.js, TypeScript, and MySQL. This project follows Clean Architecture principles to ensure scalability and testability.
 
-## 🏗️ Architecture
+## Architecture & Design Patterns
 
-```
-src/
-├── domain/              # Business entities, repository interfaces, custom errors
-├── application/         # Use cases (business logic) and DTOs
-├── infrastructure/      # Database connection and repository implementations
-└── interfaces/          # Controllers, routes, and middlewares (HTTP layer)
-```
+This project adheres to Clean Architecture, decoupling the business logic from external frameworks, databases, and delivery mechanisms.
 
-Each layer only depends on the layer **below it** — keeping business logic independent from frameworks and databases.
+- **Domain**: Core business entities and repository interfaces. Contains enterprise-wide business rules.
+- **Application**: Use cases and Data Transfer Objects (DTOs). Contains application-specific business rules.
+- **Infrastructure**: Concrete implementations of repository interfaces (e.g., MySQL connection, database queries).
+- **Interfaces**: HTTP delivery layer containing Express controllers, routes, and middleware.
 
-## 🛠️ Tech Stack
+Each layer only depends on the layer strictly below it, keeping business logic independent and highly testable.
 
-| Tool | Purpose |
-|---|---|
-| Express.js | HTTP framework |
-| TypeScript | Type safety |
-| MySQL + mysql2 | Database & query driver |
-| Zod | Request validation |
-| bcryptjs | Password hashing |
-| jsonwebtoken | JWT authentication |
-| ts-node-dev | Dev server with hot reload |
+## Technology Stack
 
-## ⚙️ Prerequisites
+| Category          | Technologies                                  |
+|-------------------|-----------------------------------------------|
+| **Core**          | Node.js, Express.js                           |
+| **Language**      | TypeScript                                    |
+| **Database**      | MySQL, `mysql2` driver                        |
+| **Validation**    | Zod                                           |
+| **Security**      | `bcryptjs` (password hashing), `jsonwebtoken` |
+| **Development**   | `ts-node-dev` (live reload)                   |
 
-- Node.js >= 18
-- MySQL >= 8.0
-- npm >= 9
+## Getting Started
 
-## 📦 Installation
+### Prerequisites
 
-### 1. Clone the repository
+Ensure you have the following installed on your local development machine:
 
-```bash
-git clone https://github.com/your-username/restfull-api-ts.git
-cd restfull-api-ts
-```
+- Node.js (v18 or higher)
+- npm (v9 or higher)
+- MySQL (v8.0 or higher)
 
-### 2. Install dependencies
+### Installation
 
-```bash
-npm install
-```
+1. **Clone the repository**
 
-### 3. Configure environment variables
+   ```bash
+   git clone https://github.com/your-username/restfull-api-ts.git
+   cd restfull-api-ts
+   ```
 
-```bash
-cp .env.example .env
-```
+2. **Install dependencies**
 
-Edit `.env` with your values:
+   ```bash
+   npm install
+   ```
 
-```env
-PORT=3000
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=your_database
-JWT_SECRET=your_secret_key
-JWT_EXPIRES_IN=7d
-```
+3. **Configure Environment Variables**
 
-### 4. Create the database table
+   Copy the sample environment file and configure it:
 
-Run this SQL in your MySQL client:
+   ```bash
+   cp .env.example .env
+   ```
 
-```sql
-CREATE TABLE users (
-  id         INT          NOT NULL AUTO_INCREMENT,
-  name       VARCHAR(100) NOT NULL,
-  email      VARCHAR(100) NOT NULL,
-  password   VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  UNIQUE KEY email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-```
+   Update the `.env` file with your local database credentials:
 
-### 5. Start the development server
+   ```env
+   PORT=3000
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=your_password
+   DB_NAME=your_database
+   JWT_SECRET=your_secret_key
+   JWT_EXPIRES_IN=7d
+   ```
+
+4. **Initialize the Database**
+
+   Execute the following SQL script in your MySQL client to set up the required table:
+
+   ```sql
+   CREATE TABLE users (
+     id         INT          NOT NULL AUTO_INCREMENT,
+     name       VARCHAR(100) NOT NULL,
+     email      VARCHAR(100) NOT NULL,
+     password   VARCHAR(255) NOT NULL,
+     created_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+     updated_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+     PRIMARY KEY (id),
+     UNIQUE KEY email (email)
+   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+   ```
+
+### Development
+
+Start the development server with live-reloading enabled:
 
 ```bash
 npm run dev
 ```
 
-Server will start at `http://localhost:3000`
+The Express server will start and be available at `http://localhost:3000`.
 
-## 📋 Available Scripts
+## Available Scripts
 
-| Script | Description |
-|---|---|
-| `npm run dev` | Start dev server with hot reload |
-| `npm run build` | Compile TypeScript to JavaScript |
-| `npm start` | Run compiled production build |
+The following scripts are available via `npm run`:
 
-## 🔌 API Endpoints
+- `npm run dev` — Starts the development server using `ts-node-dev`.
+- `npm run build` — Compiles TypeScript source code to JavaScript in the `dist/` directory.
+- `npm start` — Runs the compiled application for production (requires building first).
+
+## API Documentation
 
 Base URL: `http://localhost:3000/api`
 
-### Users
+### Endpoints
 
-| Method | Endpoint | Description | Auth |
-|---|---|---|---|
-| `POST` | `/users` | Create a new user | — |
-| `GET` | `/users` | Get all users | — |
-| `GET` | `/users/:id` | Get user by ID | — |
-| `PUT` | `/users/:id` | Update user | — |
-| `DELETE` | `/users/:id` | Delete user | — |
+| Resource | Method   | Endpoint       | Description                  | Auth Required |
+|----------|----------|----------------|------------------------------|---------------|
+| Users    | `POST`   | `/users`       | Create a new user            | No            |
+| Users    | `GET`    | `/users`       | Retrieve all users           | No            |
+| Users    | `GET`    | `/users/:id`   | Retrieve a specific user     | No            |
+| Users    | `PUT`    | `/users/:id`   | Update an existing user      | No            |
+| Users    | `DELETE` | `/users/:id`   | Delete a user                | No            |
 
-### Request & Response Examples
+### Example Requests & Responses
 
-#### POST `/api/users`
+#### Create User
 
-**Request body:**
+**POST** `/api/users`
+
+*Request Body:*
+
 ```json
 {
   "name": "John Doe",
-  "email": "john@example.com",
-  "password": "secret123"
+  "email": "john.doe@example.com",
+  "password": "securepassword123"
 }
 ```
 
-**Response `201`:**
+*Success Response (201 Created):*
+
 ```json
 {
   "status": "success",
   "data": {
     "id": 1,
     "name": "John Doe",
-    "email": "john@example.com",
+    "email": "john.doe@example.com",
     "created_at": "2024-01-01T00:00:00.000Z",
     "updated_at": "2024-01-01T00:00:00.000Z"
   }
 }
 ```
 
-#### GET `/api/users`
-
-**Response `200`:**
-```json
-{
-  "status": "success",
-  "data": [...]
-}
-```
-
-#### PUT `/api/users/:id`
-
-**Request body** (all fields optional):
-```json
-{
-  "name": "Jane Doe",
-  "email": "jane@example.com",
-  "password": "newpassword123"
-}
-```
-
-#### Error Response
-
-```json
-{
-  "status": "error",
-  "message": "User not found"
-}
-```
-
-#### Validation Error Response
+*Validation Error Response (400 Bad Request):*
 
 ```json
 {
@@ -181,24 +161,17 @@ Base URL: `http://localhost:3000/api`
 }
 ```
 
-## 🏛️ Layer Responsibilities
-
-| Layer | Folder | Responsibility |
-|---|---|---|
-| **Domain** | `src/domain/` | Entities, repository interfaces, business errors |
-| **Application** | `src/application/` | Use cases orchestrating business logic |
-| **Infrastructure** | `src/infrastructure/` | MySQL queries, database connection |
-| **Interface** | `src/interfaces/` | HTTP controllers, routes, Express middlewares |
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
-├── domain/
+├── app.ts                          # Express application setup
+├── server.ts                       # Server initialization entry point
+├── domain/                         # Enterprise business rules
 │   ├── entities/User.ts
 │   ├── repositories/IUserRepository.ts
 │   └── errors/AppError.ts
-├── application/
+├── application/                    # Application use cases
 │   ├── dtos/UserDTO.ts
 │   └── use-cases/
 │       ├── CreateUserUseCase.ts
@@ -206,19 +179,17 @@ src/
 │       ├── GetUserByIdUseCase.ts
 │       ├── UpdateUserUseCase.ts
 │       └── DeleteUserUseCase.ts
-├── infrastructure/
+├── infrastructure/                 # External service implementations
 │   ├── database/connection.ts
 │   └── repositories/MysqlUserRepository.ts
-├── interfaces/
-│   ├── controllers/UserController.ts
-│   ├── routes/user.routes.ts
-│   └── middlewares/
-│       ├── errorHandler.ts
-│       └── validate.ts
-├── app.ts
-└── server.ts
+└── interfaces/                     # Delivery mechanisms (HTTP)
+    ├── controllers/UserController.ts
+    ├── routes/user.routes.ts
+    └── middlewares/
+        ├── errorHandler.ts
+        └── validate.ts
 ```
 
-## 📄 License
+## License
 
-MIT
+This project is licensed under the MIT License.
